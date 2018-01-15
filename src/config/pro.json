@@ -1,0 +1,12 @@
+{
+  "PORT": "$PORT",
+  "secret": "supersecret",
+  "DB_URL": "$DB_URL",
+  "jwt": {
+    "secret": "super-secret-token"
+  },
+  "google": {},
+  "facebook": {},
+  "twitter": {},
+  "instagram": {}
+}

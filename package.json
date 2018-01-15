@@ -1,0 +1,60 @@
+{
+  "name": "rest-full-api-template",
+  "version": "1.0.0",
+  "description": "Awesome express-restful template that includes JWT and social networks authentication (Google, Facebook, Twitter and Instagram)",
+  "main": "./src/server.js",
+  "scripts": {
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
+    "commit": "git-cz",
+    "create-db-container": "sudo docker run -d -p 27017:27017 -v ~/data:/data/db --restart unless-stopped mongo",
+    "init-db": "node ./src/dao/.bin/initDB.js",
+    "eslint": "./node_modules/.bin/eslint .",
+    "eslint-fix": "./node_modules/.bin/eslint --fix .",
+    "start": "NODE_ENV=dev PORT=3000 DB_URL='mongodb://localhost:27017/db-url node ./src/server.js",
+    "start-dev": "NODE_ENV=dev PORT=3000 DB_URL='mongodb://localhost:27017/development-database' nodemon ./src/server.js",
+    "start-dev-debug": "NODE_ENV=dev PORT=3000 DB_URL='mongodb://localhost:27017/development-database' node --inspect ./src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "precommit": "npm run eslint",
+    "prepush": "npm run eslint"
+  },
+  "author": {
+    "name": "Ignacio Justicia Ramos",
+    "email": "ignaciojusticia@gmail.com"
+  },
+  "contributors": [],
+  "license": "GNU",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.2",
+    "email-validator": "^1.1.1",
+    "express": "^4.16.2",
+    "express-boom": "^2.0.0",
+    "getconfig": "^4.1.0",
+    "jsonwebtoken": "^7.4.3",
+    "lodash": "^4.17.4",
+    "mongoose": "^4.13.9"
+  },
+  "devDependencies": {
+    "commitizen": "^2.9.6",
+    "cz-conventional-changelog": "^2.1.0",
+    "eslint": "^4.15.0",
+    "eslint-plugin-node": "^5.2.1",
+    "husky": "^0.14.3",
+    "nodemon": "^1.14.11"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "keywords": [
+    "express",
+    "nodejs",
+    "jwt",
+    "authentication",
+    "backend",
+    "template",
+    "restful-api",
+    "microservice-template"
+  ]
+}
