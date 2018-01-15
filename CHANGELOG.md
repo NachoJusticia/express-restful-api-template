@@ -4,8 +4,7 @@
 
 ### Features
 
-* **authentication:** Add register and login endpoints and start a users' CRUD ([db1524b](https://github.com/NachoJusticia/express-restful-api-template/commit/db1524b))
-* **configuration:** Add eslint rules and husky precommit ([eaf774e](https://github.com/NachoJusticia/express-restful-api-template/commit/eaf774e))
+* **authentication:** First commit ([126ee44](https://github.com/NachoJusticia/express-restful-api/commit/126ee44))
 
 
 
