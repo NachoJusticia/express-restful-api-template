@@ -1,6 +1,6 @@
 {
   "name": "rest-full-api-template",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Awesome express-restful template that includes JWT and social networks authentication (Google, Facebook, Twitter and Instagram)",
   "main": "./src/server.js",
   "scripts": {
