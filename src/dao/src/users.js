@@ -1,19 +1,13 @@
 'use strict';
 
 const _ = require('lodash');
-const mongoose = require('mongoose');
 const EmailValidator = require('email-validator');
 const Bcrypt = require('bcryptjs'); // To hash passwords
 
+const UserModel = require(__dir + 'models').userModel;
+
 const saltRounds = 10;
 const desiredUserKeys = ['email', 'name']; // Note that the rest of the properties will not be used
-
-const UserSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  password: String
-});
-mongoose.model('User', UserSchema);
 
 
 /**
@@ -27,8 +21,6 @@ mongoose.model('User', UserSchema);
  */
 module.exports = () => {
 
-  const users = mongoose.model('User');
-
 
   /**
    * This function finds all the users of the collection.
@@ -36,7 +28,7 @@ module.exports = () => {
    */
   const findAll = async () => {
 
-    return await users.find({});
+    return await UserModel.find({});
   };
 
 
@@ -47,7 +39,7 @@ module.exports = () => {
    */
   const findByEmail = async (email) => {
 
-    const user =  await users.findOne({ email });
+    const user = await UserModel.findOne({ email });
     return _.pick(user, desiredUserKeys);
   };
 
@@ -60,7 +52,7 @@ module.exports = () => {
    */
   const checkCredentials = async (email, password) => {
 
-    const user = await users.findOne({ email });
+    const user = await UserModel.findOne({ email });
     const isPasswordValid = Bcrypt.compareSync(password, user.password);
     if (isPasswordValid) {
       return _.pick(user, desiredUserKeys);
@@ -85,7 +77,7 @@ module.exports = () => {
     newUser.password = hashedPassword;  // Store hashed password in DB
 
     try {
-      const registeredUser = await users.create(newUser);
+      const registeredUser = await UserModel.create(newUser);
       if (registeredUser) {
         return _.pick(registeredUser, desiredUserKeys);
       }
@@ -105,7 +97,7 @@ module.exports = () => {
    */
   const updateByEmail = async (email, user) => {
 
-    return await users.update({ email }, user);
+    return await UserModel.update({ email }, user);
   };
 
   // Exports the following factory

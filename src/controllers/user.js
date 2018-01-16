@@ -37,6 +37,6 @@ router.get('/email/:email', VerifyToken, async (req, res) => {
  * Exports the following routes:
  *
  * GET  /all
-* GET   /email/:email
+ * GET  /email/:email
  */
 module.exports = router;
