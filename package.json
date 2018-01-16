@@ -1,6 +1,6 @@
 {
   "name": "rest-full-api-template",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Awesome express-restful template that includes JWT and social networks authentication (Google, Facebook, Twitter and Instagram)",
   "main": "./src/server.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "init-db": "node ./src/dao/.bin/initDB.js",
     "eslint": "./node_modules/.bin/eslint .",
     "eslint-fix": "./node_modules/.bin/eslint --fix .",
-    "start": "NODE_ENV=dev PORT=3000 DB_URL='mongodb://localhost:27017/db-url node ./src/server.js",
+    "start": "NODE_ENV=pro PORT=3000 DB_URL='mongodb://localhost:27017/db-url' node ./src/server.js",
     "start-dev": "NODE_ENV=dev PORT=3000 DB_URL='mongodb://localhost:27017/development-database' nodemon ./src/server.js",
     "start-dev-debug": "NODE_ENV=dev PORT=3000 DB_URL='mongodb://localhost:27017/development-database' node --inspect ./src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -27,6 +27,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
     "email-validator": "^1.1.1",
+    "email-verification": "^0.4.6",
     "express": "^4.16.2",
     "express-boom": "^2.0.0",
     "getconfig": "^4.1.0",

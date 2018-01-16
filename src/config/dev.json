@@ -2,11 +2,16 @@
   "PORT": "$PORT",
   "secret": "supersecret",
   "DB_URL": "$DB_URL",
+  "BASE_URL": "localhost:3000/api",
   "jwt": {
     "secret": "super-secret-token"
   },
   "google": {},
   "facebook": {},
   "twitter": {},
-  "instagram": {}
+  "instagram": {},
+  "nev": {
+    "email": "my-mail@example.com",
+    "password": "my-password"
+  }
 }
