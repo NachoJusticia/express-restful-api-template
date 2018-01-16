@@ -37,11 +37,18 @@
   },
   "devDependencies": {
     "commitizen": "^2.9.6",
+    "cookie-parser": "^1.4.3",
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^4.15.0",
     "eslint-plugin-node": "^5.2.1",
+    "express-logger": "0.0.3",
+    "express-session": "^1.15.6",
     "husky": "^0.14.3",
-    "nodemon": "^1.14.11"
+    "nodemon": "^1.14.11",
+    "passport": "^0.4.0",
+    "passport-facebook": "^2.1.1",
+    "passport-google-oauth2": "^0.1.6",
+    "passport-google-oauth20": "^1.0.0"
   },
   "config": {
     "commitizen": {
