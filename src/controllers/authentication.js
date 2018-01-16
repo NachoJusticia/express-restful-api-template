@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const VerifyToken = require('../verifyToken');
-
+const _ = require('lodash');
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 
@@ -40,26 +40,23 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
 
   try {
-
     const userToRegister = {
-      _doc: {
-        email: req.body.email,
-        password: req.body.password,
-        name: req.body.name
-      }
+      email: req.body.email,
+      password: req.body.password,
+      name: req.body.name
     };
+    userToRegister._doc = _.clone(userToRegister); // The nev module needs this _doc property to create the temporary user
 
     req.nev.createTempUser(userToRegister, function (err, existingPersistentUser, newTempUser) {
 
       if (err) {
         return res.boom.badImplementation('There was a problem registering the user');
-      } else if (existingPersistentUser || !existingPersistentUser) {
+      } else if (existingPersistentUser || newTempUser === null) {
         return res.boom.conflict('The email ' + req.body.email + ' is already in use');
       }
 
       // User created in temporary collection
       const URL = newTempUser[req.nev.options.URLFieldName];
-
       req.nev.sendVerificationEmail(userToRegister.email, URL, function (err, /*info*/) {
         if (err) {
           return res.boom.badImplementation('There was a problem sendint the verification email to the email ' + req.body.email);
