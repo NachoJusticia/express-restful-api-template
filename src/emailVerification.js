@@ -9,7 +9,6 @@ const emailAccount = Config.nev.email;
 
 const customHasherFunction = (password, tempUserData, insertTempUser, callback) => {
   const hash = Bcrypt.hashSync(password, 10, null);
-  //const hash = bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
   return insertTempUser(hash, tempUserData, callback);
 };
 
@@ -22,7 +21,7 @@ module.exports = {
   emailFieldName: 'email',
   passwordFieldName: 'password',
   URLFieldName: 'GENERATED_VERIFYING_URL',
-  expirationTime: 15,
+  expirationTime: 86400,
   transportOptions: {
     service: 'Gmail',
     auth: {

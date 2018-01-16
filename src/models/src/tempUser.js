@@ -6,7 +6,7 @@ const TempUserSchema = new mongoose.Schema({
   name: String,
   email: String,
   password: String,
-  GENERATED_VERIFYING_URL: String
+  GENERATED_VERIFYING_URL: String  // This is useful for the email verification process
 });
 
 
