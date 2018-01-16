@@ -8,13 +8,9 @@ const Config = require('getconfig');
 const express = require('express');
 const boom = require('express-boom');
 const passport = require('passport');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
 const FacebookStrategy = require('passport-facebook');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-let oauth = require('oauth');
-let logger = require('express-logger');
-let session = require('express-session');
+const TwitterStrategy = require('passport-twitter').Strategy;
 const app = express();
 app.use(boom());
 
@@ -68,18 +64,17 @@ function (accessToken, refreshToken, profile, cb) {
 ));
 
 /** TWITTER */
-// Get your credentials for TWITTER here: https://dev.twitter.com/apps
-const _twitterConsumerKey = Config.twitter.consumerKey;
-const _twitterConsumerSecret = Config.twitter.consumerSecret;
-const consumerTwitter = new oauth.OAuth(
-  'https://twitter.com/oauth/request_token', 'https://twitter.com/oauth/access_token',
-  _twitterConsumerKey, _twitterConsumerSecret, '1.0A', Config.twitter.callbackURL, 'HMAC-SHA1');
-
-app.use((req, res, next) => {
-  req.nev = nev;
-  req.consumerTwitter = consumerTwitter;
-  next();
-});
+passport.use(new TwitterStrategy({
+  consumerKey: Config.twitter.consumerKey,
+  consumerSecret: Config.twitter.consumerSecret,
+  callbackURL: Config.twitter.callbackURL
+},
+function(token, tokenSecret, profile, cb) {
+  User.findOrCreate({ twitterId: profile.id }, function (err, user) {
+    return cb(err, user);
+  });
+}
+));
 
 /** FACEBOOK */
 // Transform Facebook profile because Facebook and Google profile objects look different
@@ -109,16 +104,5 @@ app.use('/api/social-auth', SocialNetworksAuth);
 // Initialize Passport
 app.use(passport.initialize());
 app.use(passport.session());
-// Set up Twitter auth routes
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(logger({ path: 'log/express.log'}));
-app.use(cookieParser());
-app.use(session({ secret: 'very secret', resave: false, saveUninitialized: true}));
-
-app.use(function(req, res, next) {
-  res.locals.session = req.session;
-  next();
-});
 
 module.exports = app;
