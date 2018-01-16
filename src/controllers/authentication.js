@@ -21,7 +21,7 @@ router.post('/login', async (req, res) => {
     const loggedUser = await UserDAO.checkCredentials(req.body.email, req.body.password);
     if (loggedUser) {
       const token = JWT.sign(loggedUser, Config.jwt.secret, {
-        expiresIn: 10 // expires in 24 hours
+        expiresIn: 86400 // expires in 24 hours
       });
 
       return res.status(200).send({
@@ -30,38 +30,49 @@ router.post('/login', async (req, res) => {
         user: loggedUser
       });
     }
-    return res.boom.notFound('Incorrect credentials.');
+    return res.boom.notFound('Incorrect credentials');
   } catch (error) {
-    return res.boom.badImplementation('There was a problem in the login process.');
+    return res.boom.badImplementation('There was a problem in the login process');
   }
 });
 
 
 router.post('/register', async (req, res) => {
 
-  const userToRegister = {
-    email: req.body.email,
-    password: req.body.password,
-    name: req.body.name
-  };
-
   try {
-    const newUser = await UserDAO.createNew(userToRegister);
-    const token = JWT.sign({ id: newUser._id }, Config.jwt.secret, {
-      expiresIn: 86400 // expires in 24 hours
+
+    const userToRegister = {
+      _doc: {
+        email: req.body.email,
+        password: req.body.password,
+        name: req.body.name
+      }
+    };
+
+    req.nev.createTempUser(userToRegister, function (err, existingPersistentUser, newTempUser) {
+
+      if (err) {
+        return res.boom.badImplementation('There was a problem registering the user');
+      } else if (existingPersistentUser || !existingPersistentUser) {
+        return res.boom.conflict('The email ' + req.body.email + ' is already in use');
+      }
+
+      // User created in temporary collection
+      const URL = newTempUser[req.nev.options.URLFieldName];
+
+      req.nev.sendVerificationEmail(userToRegister.email, URL, function (err, /*info*/) {
+        if (err) {
+          return res.boom.badImplementation('There was a problem sendint the verification email to the email ' + req.body.email);
+        }
+
+        return res.status(200).send({
+          message: 'Verification email sent',
+          user: userToRegister._doc
+        });
+      });
     });
-    return res.status(200).send({
-      token: token,
-      message: 'User successfuly registered',
-      newUser
-    });
-  } catch (error) {
-    if (error.message === 'MongoError') {
-      return res.boom.conflict('The email ' + userToRegister.email + ' is already in use.');
-    } else if (error.message === 'ValidationError') {
-      return res.boom.badRequest('The email is not valid');
-    }
-    return res.boom.badImplementation('There was a problem registering the user.');
+  } catch (err) {
+    return res.boom.badImplementation('There was a problem registering the user');
   }
 });
 
