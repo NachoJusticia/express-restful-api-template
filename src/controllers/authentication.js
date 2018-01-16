@@ -47,9 +47,9 @@ router.post('/register', async (req, res) => {
     };
     userToRegister._doc = _.clone(userToRegister); // The nev module needs this _doc property to create the temporary user
 
-    req.nev.createTempUser(userToRegister, function (err, existingPersistentUser, newTempUser) {
+    req.nev.createTempUser(userToRegister, function (error, existingPersistentUser, newTempUser) {
 
-      if (err) {
+      if (error) {
         return res.boom.badImplementation('There was a problem registering the user');
       } else if (existingPersistentUser || newTempUser === null) {
         return res.boom.conflict('The email ' + req.body.email + ' is already in use');
@@ -57,18 +57,18 @@ router.post('/register', async (req, res) => {
 
       // User created in temporary collection
       const URL = newTempUser[req.nev.options.URLFieldName];
-      req.nev.sendVerificationEmail(userToRegister.email, URL, function (err, /*info*/) {
-        if (err) {
-          return res.boom.badImplementation('There was a problem sendint the verification email to the email ' + req.body.email);
+      req.nev.sendVerificationEmail(userToRegister.email, URL, function (error, /*info*/) {
+        if (error) {
+          return res.boom.badImplementation('There was a problem sending the verification email to the email ' + req.body.email);
         }
 
         return res.status(200).send({
           message: 'Verification email sent',
-          user: userToRegister._doc
+          user: _.pick(userToRegister._doc, ['email', 'name']) // Do not send the password and other sensitive fields
         });
       });
     });
-  } catch (err) {
+  } catch (error) {
     return res.boom.badImplementation('There was a problem registering the user');
   }
 });
@@ -83,11 +83,37 @@ router.get('/me', VerifyToken, async (req, res) => {
 });
 
 
+router.get('/email-verification/:verificationURL', async (req, res) => {
+
+  try {
+    req.nev.confirmTempUser(req.params.verificationURL, async (error, user) => {
+      if (error) {
+        return res.boom.badImplementation('There was a problem while confirmating the user email');
+      }
+      if (user) {
+        req.nev.sendConfirmationEmail(user.email, (err, info) => {
+          if (error) {
+            return res.boom.badImplementation('There was a problem sending the success confirmation email');
+          }
+          return res.status(200).send({
+            message: 'Confirmation email sent',
+            info
+          });
+        });
+      }
+    });
+  } catch (error) {
+    return res.boom.notFound('We could not find any user registration request for this URL');
+  }
+});
+
+
 /**
  * Exports the following routes:
  *
  * POST /login
  * POST /register
  * GET  /me
+ * GET  /email-verification/:verificationURL
  */
 module.exports = router;
