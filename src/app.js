@@ -18,7 +18,9 @@ mongoose.connect(Config.DB_URL, { 'useMongoClient': true });
 const emailVerificationConfig = require('./emailVerification');
 const nev = require('email-verification')(mongoose);
 nev.configure(emailVerificationConfig, (error) => {
-  throw error;
+  if (error) {
+    throw error;
+  }
 });
 
 const nodemailer = require('nodemailer');
