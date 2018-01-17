@@ -26,20 +26,10 @@ nev.configure(emailVerificationConfig, (error) => {
     throw error;
   }
 });
-
-const nodemailer = require('nodemailer');
-nodemailer.createTransport({
-  from: 'replyemail@example.com',
-  options: {
-    host: 'smtp.example.com',
-    port: 587,
-    auth: {
-      user: 'your_smtp_username',
-      pass: 'your_smtp_email'
-    }
-  }
+app.use((req, res, next) => {
+  req.nev = nev;
+  next();
 });
-
 
 app.get('/api', (req, res) => {
   res.status(200).send('API works.');

@@ -8,7 +8,9 @@ const VerifyToken = require('../verifyToken');
 router.use(bodyParser.urlencoded({ extended: true }));
 const UserDAO = require('../dao/index').users;
 
-
+/**
+ * Get all users stored in the database
+ */
 router.get('/all', VerifyToken, async (req, res) => {
 
   try {
@@ -20,6 +22,9 @@ router.get('/all', VerifyToken, async (req, res) => {
 });
 
 
+/**
+ * Find a user by its email
+ */
 router.get('/email/:email', VerifyToken, async (req, res) => {
 
   try {

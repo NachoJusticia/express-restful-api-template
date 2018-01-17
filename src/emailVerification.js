@@ -1,13 +1,19 @@
 'use strict';
 
 const Config = require('getconfig');
+const Bcrypt = require('bcryptjs'); // To hash passwords
+
 const UserModel = require(__dir + 'models').userModel;
 const TempUserModel = require(__dir + 'models').tempUserModel;
 const emailAccount = Config.nev.email;
 
+const customHasherFunction = (password, tempUserData, insertTempUser, callback) => {
+  const hash = Bcrypt.hashSync(password, 10, null);
+  return insertTempUser(hash, tempUserData, callback);
+};
 
 module.exports = {
-  verificationURL: 'http://example.com/email-verification/${URL}',
+  verificationURL: `${Config.BASE_URL}/auth/email-verification/` + '${URL}',
   URLLength: 48,
   persistentUserModel: UserModel,
   tempUserModel: TempUserModel,
@@ -37,5 +43,5 @@ module.exports = {
     html: '<p>Your account has been successfully verified.</p>',
     text: 'Your account has been successfully verified.'
   },
-  hashingFunction: null
+  hashingFunction: customHasherFunction
 };
