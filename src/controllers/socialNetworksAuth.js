@@ -30,14 +30,13 @@ router.get('/google/callback',
   });
 
 // Set up Twitter auth routes
-router.get('/twitter',
-  passport.authenticate('twitter'));
+router.get('/twitter', passport.authenticate('twitter'));
 
+// handle the callback after twitter has authenticated the user
 router.get('/twitter/callback',
-  passport.authenticate('twitter', { failureRedirect: '/login' }),
-  function(req, res) {
-    // Successful authentication, redirect home.
-    res.redirect('/');
-  });
+  passport.authenticate('twitter', {
+    successRedirect : '/profile',
+    failureRedirect : '/'
+  }));
 
 module.exports = router;

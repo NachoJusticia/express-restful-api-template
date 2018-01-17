@@ -66,6 +66,11 @@ function(token, tokenSecret, profile, cb) {
 }
 ));
 
+app.use(require('cookie-parser')());
+app.use(require('body-parser').urlencoded({ extended: true }));
+app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
+
+
 /** FACEBOOK */
 // Transform Facebook profile because Facebook and Google profile objects look different
 // and we want to transform them into user objects that have the same set of attributes
@@ -76,7 +81,7 @@ const transformFacebookProfile = (profile) => ({
 // Register Facebook Passport strategy
 passport.use(new FacebookStrategy(Config.facebook,
   // Gets called when user authorizes access to their profile
-  async function(accessToken, refreshToken, profile, done) {
+  async function (accessToken, refreshToken, profile, done) {
     // Return done callback and pass transformed user object
     done(null, transformFacebookProfile(profile._json));
   }
