@@ -18,25 +18,23 @@ router.get('/facebook/callback',
   // Redirect user back to the mobile app using Linking with a custom protocol OAuthLogin
   (req, res) => res.redirect('OAuthLogin://login?user=' + JSON.stringify(req.user)));
 
+
 // Set up Google auth routes
-router.get('/google',
-  passport.authenticate('google', { scope: ['profile'] }));
+router.get('/google', passport.authenticate('google', { scope: ['profile'] }));
 
 router.get('/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  function (req, res) {
-    // Successful authentication, redirect home..
-    res.redirect('/');
-  });
+  passport.authenticate('google', { failureRedirect: '/google' }),
+  // Redirect user back to the mobile app using Linking with a custom protocol OAuthLogin
+  (req, res) => res.redirect('OAuthLogin://login?user=' + JSON.stringify(req.user)));
+
 
 // Set up Twitter auth routes
 router.get('/twitter', passport.authenticate('twitter'));
 
-// handle the callback after twitter has authenticated the user
 router.get('/twitter/callback',
-  passport.authenticate('twitter', {
-    successRedirect : '/profile',
-    failureRedirect : '/'
-  }));
+  passport.authenticate('twitter', { failureRedirect: '/twitter' }),
+  // Redirect user back to the mobile app using Linking with a custom protocol OAuthLogin
+  (req, res) => res.redirect('OAuthLogin://login?user=' + JSON.stringify(req.user)));
+
 
 module.exports = router;

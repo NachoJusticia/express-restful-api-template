@@ -9,8 +9,8 @@ const express = require('express');
 const boom = require('express-boom');
 const passport = require('passport');
 const FacebookStrategy = require('passport-facebook');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const TwitterStrategy = require('passport-twitter').Strategy;
+const GoogleStrategy = require('passport-google-oauth20');
+const TwitterStrategy = require('passport-twitter');
 const app = express();
 app.use(boom());
 
@@ -38,53 +38,45 @@ app.get('/api', (req, res) => {
 /**
  * CONFIG FOR SOCIAL NETWORKS
  */
-
-
-/** GOOGLE */
-passport.use(new GoogleStrategy({
-  clientID: Config.google.clientID,
-  clientSecret: Config.google.clientSecret,
-  callbackURL: Config.google.callbackURL
-},
-function (accessToken, refreshToken, profile, cb) {
-  User.findOrCreate({ googleId: profile.id }, function (err, user) {
-    return cb(err, user);
-  });
-}
-));
-
-/** TWITTER */
-passport.use(new TwitterStrategy({
-  consumerKey: Config.twitter.consumerKey,
-  consumerSecret: Config.twitter.consumerSecret,
-  callbackURL: Config.twitter.callbackURL
-},
-function(token, tokenSecret, profile, cb) {
-  User.findOrCreate({ twitterId: profile.id }, function (err, user) {
-    return cb(err, user);
-  });
-}
-));
-
-app.use(require('cookie-parser')());
-app.use(require('body-parser').urlencoded({ extended: true }));
-app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
-
-
-/** FACEBOOK */
 // Transform Facebook profile because Facebook and Google profile objects look different
 // and we want to transform them into user objects that have the same set of attributes
 const transformFacebookProfile = (profile) => ({
   name: profile.name,
   avatar: profile.picture.data.url
 });
+const transformGoogleProfile = (profile) => ({
+  name: profile.displayName,
+  avatar: profile.image.url
+});
+const transformTwitterProfile = (profile) => ({
+  name: profile.displayName
+});
+
+// Serialize user into the sessions
+passport.serializeUser((user, done) => done(null, user));
+
+// Deserialize user from the sessions
+passport.deserializeUser((user, done) => done(null, user));
+
+
+/** GOOGLE */
+// Register Google Passport strategy
+passport.use(new GoogleStrategy(Config.google,
+  // Gets called when user authorizes access to their profile
+  async (accessToken, refreshToken, profile, done) => done(null, transformGoogleProfile(profile._json))
+));
+
+/** TWITTER */
+passport.use(new TwitterStrategy(Config.twitter,
+  // Gets called when user authorizes access to their profile
+  async (accessToken, refreshToken, profile, done) => done(null, transformTwitterProfile(profile._json))
+));
+
+/** FACEBOOK */
 // Register Facebook Passport strategy
 passport.use(new FacebookStrategy(Config.facebook,
   // Gets called when user authorizes access to their profile
-  async function (accessToken, refreshToken, profile, done) {
-    // Return done callback and pass transformed user object
-    done(null, transformFacebookProfile(profile._json));
-  }
+  async (accessToken, refreshToken, profile, done) => done(null, transformFacebookProfile(profile._json))
 ));
 
 // Import controllers
@@ -92,9 +84,14 @@ const UserController = require(`${__dir}controllers/user`);
 const AuthController = require(`${__dir}controllers/authentication`);
 const SocialNetworksAuth = require(`${__dir}controllers/SocialNetworksAuth`);
 
+app.use(require('cookie-parser')());
+app.use(require('body-parser').urlencoded({ extended: true }));
+app.use(require('express-session')({ secret: 'keyboard'}));
+
 app.use('/api/users', UserController);
 app.use('/api/auth', AuthController);
 app.use('/api/social-auth', SocialNetworksAuth);
+
 
 // Initialize Passport
 app.use(passport.initialize());
