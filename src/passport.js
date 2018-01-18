@@ -22,7 +22,7 @@ module.exports = function(passport) {
   passport.use(new GoogleStrategy(Config.google,
     async function (token, tokenSecret, profile, done) {
       try {
-        const user = await UserDAO.createNewSocialNetwork(profile);
+        const user = await UserDAO.createNewGoogle(profile);
         done(null, user);
       } catch (error) {
         return done(null, error);
@@ -35,15 +35,12 @@ module.exports = function(passport) {
   // =========================================================================
   // Register Facebook Passport strategy
   passport.use(new FacebookStrategy(Config.facebook,
-    async function (token, tokenSecret, profile/*, done*/) {
+    async function (token, tokenSecret, profile, done) {
       try {
-        const user = await UserDAO.findUserByFacebook(profile);
-        if (!user) {
-          return res.status(404).send('No facebook user found.');
-        }
-        res.status(200).send(user);
+        const user = await UserDAO.createNewFacebook(profile);
+        done(null, user);
       } catch (error) {
-        return res.status(500).send('There was a problem finding the user.');
+        return done(null, error);
       }
     }));
 
@@ -51,15 +48,12 @@ module.exports = function(passport) {
   // TWITTER ==================================================================
   // =========================================================================
   passport.use(new TwitterStrategy(Config.twitter,
-    async function (token, tokenSecret, profile/*, done*/) {
+    async function (token, tokenSecret, profile, done) {
       try {
-        const user = await UserDAO.findUserByTwitter(profile);
-        if (!user) {
-          return res.status(404).send('No twitter user found.');
-        }
-        res.status(200).send(user);
+        const user = await UserDAO.createNewTwitter(profile);
+        done(null, user);
       } catch (error) {
-        return res.status(500).send('There was a problem finding the user.');
+        return done(null, error);
       }
     }));
 

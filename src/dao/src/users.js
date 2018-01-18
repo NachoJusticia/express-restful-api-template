@@ -104,12 +104,12 @@ module.exports = () => {
   };
 
   /**
-   * This function retrieves a user from the database searching by its email
+   * This function find, verify and create a user account from Google, Facebook and Twitter
    * @param {String} profile
    * @returns {Promise} the corresponding user.
    */
 
-  const createNewSocialNetwork = async (profile) => {
+  const createNewGoogle = async (profile) => {
 
     if (!EmailValidator.validate(profile.emails[0].value)) {
       throw new Error('ValidationError');
@@ -132,6 +132,48 @@ module.exports = () => {
     }
   };
 
+  const createNewTwitter = async (profile) => {
+
+    const newUser = new User({
+      name: profile.displayName,
+      email: profile.id
+    });
+
+    try {
+      const registeredUser = await UserModel.create(newUser);
+      if (registeredUser) {
+        return _.pick(registeredUser, desiredUserKeys);
+      }
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new Error('MongoError');
+      }
+    }
+  };
+
+  const createNewFacebook = async (profile) => {
+
+    if (!EmailValidator.validate(profile.emails[0].value)) {
+      throw new Error('ValidationError');
+    }
+
+    const newUser = new User({
+      name: profile.name.givenName + ' ' + profile.name.familyName,
+      email: profile.emails[0].value
+    });
+
+    try {
+      const registeredUser = await UserModel.create(newUser);
+      if (registeredUser) {
+        return _.pick(registeredUser, desiredUserKeys);
+      }
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new Error('MongoError');
+      }
+    }
+  };
+
   // Exports the following factory
   return {
     findAll,
@@ -139,6 +181,8 @@ module.exports = () => {
     checkCredentials,
     createNew,
     updateByEmail,
-    createNewSocialNetwork
+    createNewGoogle,
+    createNewTwitter,
+    createNewFacebook
   };
 };

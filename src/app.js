@@ -44,7 +44,7 @@ const SocialNetworksAuth = require(`${__dir}controllers/SocialNetworksAuth`);
 
 app.use(require('cookie-parser')());
 app.use(require('body-parser').urlencoded({ extended: true }));
-app.use(require('express-session')({ secret: 'keyboard' }));
+app.use(require('express-session')({ secret: 'keyboard',resave: false}));
 
 app.use('/api/users', UserController);
 app.use('/api/auth', AuthController);
