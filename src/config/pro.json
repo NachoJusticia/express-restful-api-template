@@ -1,12 +1,16 @@
 {
   "PORT": "$PORT",
-  "secret": "supersecret",
   "DB_URL": "$DB_URL",
+  "BASE_URL": "$BASE_URL",
   "jwt": {
-    "secret": "super-secret-token"
+    "secret": "$JWT_TOKEN"
   },
   "google": {},
   "facebook": {},
   "twitter": {},
-  "instagram": {}
+  "instagram": {},
+  "nev": {
+    "email": "$NEV_EMAIL",
+    "password": "$NEV_PASSWORD"
+  }
 }

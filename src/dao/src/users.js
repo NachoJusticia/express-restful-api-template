@@ -53,11 +53,12 @@ module.exports = () => {
   const checkCredentials = async (email, password) => {
 
     const user = await UserModel.findOne({ email });
-    const isPasswordValid = Bcrypt.compareSync(password, user.password);
-    if (isPasswordValid) {
-      return _.pick(user, desiredUserKeys);
+    if (user) {
+      if (Bcrypt.compareSync(password, user.password)) { // Check if the password is correct
+        return _.pick(user, desiredUserKeys); // Credentials matched ok
+      }
     }
-    return false;
+    return false; // Chedentials did not match
   };
 
 
