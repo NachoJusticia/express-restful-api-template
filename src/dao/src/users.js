@@ -5,6 +5,8 @@ const EmailValidator = require('email-validator');
 const Bcrypt = require('bcryptjs'); // To hash passwords
 
 const UserModel = require(__dir + 'models').userModel;
+const Mongoose = require('mongoose');
+const User = Mongoose.model('User');
 
 const saltRounds = 10;
 const desiredUserKeys = ['email', 'name']; // Note that the rest of the properties will not be used
@@ -101,12 +103,42 @@ module.exports = () => {
     return await UserModel.update({ email }, user);
   };
 
+  /**
+   * This function retrieves a user from the database searching by its email
+   * @param {String} profile
+   * @returns {Promise} the corresponding user.
+   */
+
+  const createNewSocialNetwork = async (profile) => {
+
+    if (!EmailValidator.validate(profile.emails[0].value)) {
+      throw new Error('ValidationError');
+    }
+
+    const newUser = new User({
+      name: profile.displayName,
+      email: profile.emails[0].value
+    });
+
+    try {
+      const registeredUser = await UserModel.create(newUser);
+      if (registeredUser) {
+        return _.pick(registeredUser, desiredUserKeys);
+      }
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new Error('MongoError');
+      }
+    }
+  };
+
   // Exports the following factory
   return {
     findAll,
     findByEmail,
     checkCredentials,
     createNew,
-    updateByEmail
+    updateByEmail,
+    createNewSocialNetwork
   };
 };
