@@ -15,7 +15,8 @@
     "start-dev-debug": "NODE_ENV=dev PORT=3000 DB_URL='mongodb://localhost:27017/development-database' node --inspect ./src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "precommit": "npm run eslint",
-    "prepush": "npm run eslint"
+    "prepush": "npm run eslint",
+    "lint": "node_modules/.bin/goodparts path/to/files/for/linting"
   },
   "author": {
     "name": "Ignacio Justicia Ramos",
@@ -40,6 +41,7 @@
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^4.15.0",
     "eslint-plugin-node": "^5.2.1",
+    "goodparts": "^1.2.1",
     "husky": "^0.14.3",
     "nodemon": "^1.14.11"
   },
