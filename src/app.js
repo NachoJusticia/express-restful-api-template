@@ -14,6 +14,11 @@ const passport = require('passport');
 const app = express();
 app.use(boom());
 
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 // Database connection
 const mongoose = require('mongoose');
 mongoose.connect(Config.DB_URL, { 'useMongoClient': true });
@@ -49,10 +54,5 @@ app.use(require('express-session')({ secret: 'keyboard',resave: false}));
 app.use('/api/users', UserController);
 app.use('/api/auth', AuthController);
 app.use('/api/social-auth', SocialNetworksAuth);
-
-
-// Initialize Passport
-app.use(passport.initialize());
-app.use(passport.session());
 
 module.exports = app;
