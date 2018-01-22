@@ -1,3 +1,8 @@
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/NachoJusticia/express-restful-api-template/compare/v1.1.0...v2.0.0) (2018-01-22)
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/NachoJusticia/express-restful-api-template/compare/v1.0.1...v1.1.0) (2018-01-22)
 
