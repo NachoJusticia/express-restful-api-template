@@ -4,7 +4,7 @@ const _ = require('lodash');
 const EmailValidator = require('email-validator');
 const Bcrypt = require('bcryptjs'); // To hash passwords
 
-const UserModel = require(__dir + 'models').userModel;
+const UserModel = require('models').userModel;
 const Mongoose = require('mongoose');
 const User = Mongoose.model('User');
 
