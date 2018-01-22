@@ -21,7 +21,12 @@
     "name": "Ignacio Justicia Ramos",
     "email": "ignaciojusticia@gmail.com"
   },
-  "contributors": [],
+  "contributors": [
+    {
+      "name": "Jesús Moya Ávalos",
+      "email": "jesusmoyaavalos@gmail.com"
+    }
+  ],
   "license": "GNU",
   "dependencies": {
     "bcryptjs": "^2.4.3",
