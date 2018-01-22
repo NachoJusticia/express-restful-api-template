@@ -3,18 +3,14 @@
 const express = require('express');
 const router = express.Router();
 const VerifyToken = require('../js/verifyToken');
-
-
-// DB
 const db = require('../models');
 
-/**
- * Get all users stored in the database
- */
+//==========================================================================================
+
 router.get('/', VerifyToken, async (req, res) => {
 
   try {
-    if (req.query.email) { // Find a user by its email
+    if (req.query.email) {
       const user = await db.users.findOne({ email: req.query.email }).lean();
       if (!user) {
         return res.boom.notFound('No user found');
@@ -22,7 +18,6 @@ router.get('/', VerifyToken, async (req, res) => {
       return res.status(200).send(user);
     }
 
-    // Find all users
     const users = await db.users.find({}).lean();
     return res.status(200).send(users);
   } catch (error) {
@@ -30,10 +25,8 @@ router.get('/', VerifyToken, async (req, res) => {
   }
 });
 
+//==========================================================================================
 
-/**
- * Find a user by its email
- */
 router.get('/:id', VerifyToken, async (req, res) => {
 
   try {
@@ -51,10 +44,6 @@ router.get('/:id', VerifyToken, async (req, res) => {
   }
 });
 
-/**
- * Exports the following routes:
- *
- * GET  /all
- * GET  /:id
- */
+//==========================================================================================
+
 module.exports = router;

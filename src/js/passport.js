@@ -1,20 +1,17 @@
+'use strict';
+
 const Config = require('getconfig');
 const TwitterStrategy = require('passport-twitter');
 const FacebookStrategy = require('passport-facebook');
 const GoogleStrategy = require('passport-google-oauth20');
-
 const EmailValidator = require('email-validator');
-
-// DB
 const db = require('../models');
 
-// expose this function to our app using module.exports
-module.exports = function (passport) {
-  // Serialize user into the sessions
-  passport.serializeUser((user, done) => done(null, user));
 
-  // Deserialize user from the sessions
-  passport.deserializeUser((user, done) => done(null, user));
+module.exports = function (passport) {
+
+  passport.serializeUser((user, done) => done(null, user));   // Serialize user into the sessions
+  passport.deserializeUser((user, done) => done(null, user)); // Deserialize user from the sessions
 
 
   // Register Google Passport strategy
@@ -80,5 +77,4 @@ module.exports = function (passport) {
         return done(null, error);
       }
     }));
-
 };
