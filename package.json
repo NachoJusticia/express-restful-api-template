@@ -1,6 +1,6 @@
 {
   "name": "rest-full-api-template",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Awesome express-restful template that includes JWT and social networks authentication (Google, Facebook, Twitter and Instagram)",
   "main": "./src/server.js",
   "scripts": {
@@ -21,7 +21,12 @@
     "name": "Ignacio Justicia Ramos",
     "email": "ignaciojusticia@gmail.com"
   },
-  "contributors": [],
+  "contributors": [
+    {
+      "name": "Jesús Moya Ávalos",
+      "email": "jesusmoyaavalos@gmail.com"
+    }
+  ],
   "license": "GNU",
   "dependencies": {
     "bcryptjs": "^2.4.3",
