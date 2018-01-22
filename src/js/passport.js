@@ -3,6 +3,8 @@ const TwitterStrategy = require('passport-twitter');
 const FacebookStrategy = require('passport-facebook');
 const GoogleStrategy = require('passport-google-oauth20');
 
+const EmailValidator = require('email-validator');
+
 // DB
 const db = require('../models');
 
@@ -22,7 +24,7 @@ module.exports = function (passport) {
         if (!EmailValidator.validate(profile.emails[0].value)) {
           throw new Error('ValidationError');
         }
-        const newUser = new User({
+        const newUser = new db.users({
           name: profile.displayName,
           email: profile.emails[0].value
         });
@@ -44,7 +46,7 @@ module.exports = function (passport) {
         if (!EmailValidator.validate(profile.emails[0].value)) {
           throw new Error('ValidationError');
         }
-        const newUser = new User({
+        const newUser = new db.users({
           name: profile.name.givenName + ' ' + profile.name.familyName,
           email: profile.emails[0].value
         });
@@ -65,7 +67,7 @@ module.exports = function (passport) {
         if (!EmailValidator.validate(profile.emails[0].value)) {
           throw new Error('ValidationError');
         }
-        const newUser = new User({
+        const newUser = new db.users({
           name: profile.displayName,
           email: profile.id
         });
