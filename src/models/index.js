@@ -1,5 +1,10 @@
 'use strict';
 
-const Models = require('./src/index');
+const UserModel = require('./user');
+const TempUserModel = require('./tempUser');
 
-module.exports = Models;
+
+module.exports = {
+  users: UserModel,
+  tempUserModel: TempUserModel
+};

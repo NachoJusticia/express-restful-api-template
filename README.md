@@ -14,7 +14,6 @@ This project is an [express](http://expressjs.com) server template that is a goo
     * Twitter: [passport-twitter](https://github.com/jaredhanson/passport-twitter).
 > Note that Facebook, Google and Twitter registration/login processes uses [passport](https://www.npmjs.com/package/passport).
 * **Authentication**: JSON Web Token.
-* **Data Access Object**: this project includes its own DAO who's responsability is to offer database interaction functions.
 * **Data validation**: all the database collections have their corresponding [mongoose](http://mongoosejs.com) schema in a *models* module.
 * **Good code styling**: [eslint](https://eslint.org) and [eslint-plugin-node](https://www.npmjs.com/package/eslint-plugin-node) are included.
 * **Changelog**: automatic features and bugfixes tracking in a [changelog](https://github.com/commitizen/cz-conventional-changelog) file.
@@ -26,16 +25,12 @@ This server has a great folders structure. Tree command output `tree -d`:
 .
 ├── src
 │   ├── config
-│   ├── controllers
-│   ├── dao
-│   │   └── src
+│   ├── routes
 │   └── models
-│       └── src
 └── test
 ```
 * **config**: contains 3 JSONs to differenciate the different environments: dev (development), stg (staging) and pro (production).
-* **controllers**: have all the routes splitted in different controllers (users, authentication, socialNetworksAuth, ...).
-* **dao**: exports a factory with different Data Access Objects for accessing database interaction functions.
+* **routes**: have all the routes splitted in different files by functionality (users, authentication, socialNetworksAuth, ...).
 * **models**: exports a factory containing all the models of the application.
 
 
