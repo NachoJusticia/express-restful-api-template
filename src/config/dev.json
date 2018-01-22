@@ -1,35 +1,30 @@
 {
   "PORT": "$PORT",
+  "secret": "supersecret",
   "DB_URL": "$DB_URL",
   "BASE_URL": "localhost:3000/api",
   "jwt": {
     "secret": "super-secret-token"
   },
   "google": {
-    "clientID": "613638845487-tiufhj93f4nppp5m83q52gq1okohro74.apps.googleusercontent.com",
-    "clientSecret": "lDyf4-d7J5oyeHCiAK7FmsbR",
+    "clientID": "CLIENT-ID-GOOGLE",
+    "clientSecret": "CLIENT-SECRET-GOOGLE",
     "callbackURL": "http://localhost:3000/api/social-auth/google/callback"
-  },
-  "facebook": {
-    "clientID": "2073072162930095",
-    "clientSecret": "fec9db6cc8a21a9087a4ce116cb61903",
+    },
+    "facebook": {
+    "clientID": "CLIENT-ID-FACEBOOK",
+    "clientSecret": "CLIENT-SECRET-FACEBOOK",
     "callbackURL": "http://localhost:3000/api/social-auth/facebook/callback",
-    "profileFields": [
-      "id",
-      "name",
-      "displayName",
-      "picture",
-      "email"
-    ]
-  },
-  "twitter": {
-    "consumerKey": "NvlFYFMS6Ry2PpdcirJBbK8w5",
-    "consumerSecret": "JIHfZShPyBosdveX3MdRXbvxYTtYPqAYrHaHsImaXBElJRLdKc",
+    "profileFields": ["id", "name", "displayName", "picture", "email"]
+    },
+    "twitter": {
+    "consumerKey": "CONSUMER-KEY-TWITTER",
+    "consumerSecret": "CONSUMER-SECRET-TWITTER",
     "callbackURL": "http://localhost:3000/api/social-auth/twitter/callback"
-  },
+    },
   "instagram": {},
   "nev": {
-    "email": "elnacho94@gmail.com",
-    "password": "Mariquilla9181"
+    "email": "my-mail@example.com",
+    "password": "my-password"
   }
 }
