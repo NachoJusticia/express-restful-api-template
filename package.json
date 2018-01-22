@@ -1,13 +1,12 @@
 {
   "name": "rest-full-api-template",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Awesome express-restful template that includes JWT and social networks authentication (Google, Facebook, Twitter and Instagram)",
   "main": "./src/server.js",
   "scripts": {
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "commit": "git-cz",
     "create-db-container": "sudo docker run -d -p 27017:27017 -v ~/data:/data/db --restart unless-stopped mongo",
-    "init-db": "node ./src/dao/.bin/initDB.js",
     "eslint": "./node_modules/.bin/eslint .",
     "eslint-fix": "./node_modules/.bin/eslint --fix .",
     "start": "node ./src/server.js",
@@ -15,13 +14,19 @@
     "start-dev-debug": "NODE_ENV=dev PORT=3000 DB_URL='mongodb://localhost:27017/development-database' node --inspect ./src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "precommit": "npm run eslint",
-    "prepush": "npm run eslint"
+    "prepush": "npm run eslint",
+    "lint": "node_modules/.bin/goodparts path/to/files/for/linting"
   },
   "author": {
     "name": "Ignacio Justicia Ramos",
     "email": "ignaciojusticia@gmail.com"
   },
-  "contributors": [],
+  "contributors": [
+    {
+      "name": "Jesús Moya Ávalos",
+      "email": "jesusmoyaavalos@gmail.com"
+    }
+  ],
   "license": "GNU",
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -33,7 +38,11 @@
     "getconfig": "^4.1.0",
     "jsonwebtoken": "^7.4.3",
     "lodash": "^4.17.4",
-    "mongoose": "^4.13.9"
+    "mongoose": "^4.13.9",
+    "passport": "^0.4.0",
+    "passport-facebook": "^2.1.1",
+    "passport-google-oauth20": "^1.0.0",
+    "passport-twitter": "^1.0.4"
   },
   "devDependencies": {
     "commitizen": "^2.9.6",
@@ -43,12 +52,9 @@
     "eslint-plugin-node": "^5.2.1",
     "express-logger": "0.0.3",
     "express-session": "^1.15.6",
+    "goodparts": "^1.2.1",
     "husky": "^0.14.3",
-    "nodemon": "^1.14.11",
-    "passport": "^0.4.0",
-    "passport-facebook": "^2.1.1",
-    "passport-google-oauth20": "^1.0.0",
-    "passport-twitter": "^1.0.4"
+    "nodemon": "^1.14.11"
   },
   "config": {
     "commitizen": {

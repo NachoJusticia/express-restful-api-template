@@ -1,5 +1,6 @@
 {
   "PORT": "$PORT",
+  "secret": "supersecret",
   "DB_URL": "$DB_URL",
   "BASE_URL": "localhost:3000/api",
   "jwt": {
@@ -8,18 +9,18 @@
   "google": {
     "clientID": "CLIENT-ID-GOOGLE",
     "clientSecret": "CLIENT-SECRET-GOOGLE",
-    "callbackURL": "http://localhost:3000/api/social-auth/google/callback"
+    "callbackURL": "http://localhost:3000/api/auth/google/callback"
     },
     "facebook": {
     "clientID": "CLIENT-ID-FACEBOOK",
     "clientSecret": "CLIENT-SECRET-FACEBOOK",
-    "callbackURL": "http://localhost:3000/api/social-auth/facebook/callback",
+    "callbackURL": "http://localhost:3000/api/auth/facebook/callback",
     "profileFields": ["id", "name", "displayName", "picture", "email"]
     },
     "twitter": {
     "consumerKey": "CONSUMER-KEY-TWITTER",
     "consumerSecret": "CONSUMER-SECRET-TWITTER",
-    "callbackURL": "http://localhost:3000/api/social-auth/twitter/callback"
+    "callbackURL": "http://localhost:3000/api/auth/twitter/callback"
     },
   "instagram": {},
   "nev": {

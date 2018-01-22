@@ -3,8 +3,7 @@
 const Config = require('getconfig');
 const Bcrypt = require('bcryptjs'); // To hash passwords
 
-const UserModel = require(__dir + 'models').userModel;
-const TempUserModel = require(__dir + 'models').tempUserModel;
+const db = require('../models');
 const emailAccount = Config.nev.email;
 
 const customHasherFunction = (password, tempUserData, insertTempUser, callback) => {
@@ -15,8 +14,8 @@ const customHasherFunction = (password, tempUserData, insertTempUser, callback) 
 module.exports = {
   verificationURL: `${Config.BASE_URL}/auth/email-verification/` + '${URL}',
   URLLength: 48,
-  persistentUserModel: UserModel,
-  tempUserModel: TempUserModel,
+  persistentUserModel: db.users,
+  tempUserModel: db.tempUserModel,
   tempUserCollection: 'temporary_users',
   emailFieldName: 'email',
   passwordFieldName: 'password',
