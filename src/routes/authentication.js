@@ -58,7 +58,7 @@ router.post('/register', async (req, res) => {
         if (error) {
           return res.boom.badImplementation('There was a problem sending the verification email to the email ' + req.body.email);
         }
-        return res.status(200).send({ message: 'Verification email sent', user: _.pick(userToRegister, desiredUserKeys) }); // Do not send the password and other sensitive fields
+        return res.status(200).send({ message: 'Verification email sent', user: _.pick(userToRegister, desiredUserKeys) });
       });
     });
   } catch (error) {
@@ -99,6 +99,7 @@ router.get('/email-verification/:verificationURL', async (req, res) => {
           return res.status(200).send({ message: 'Confirmation email sent', info });
         });
       }
+      return res.boom.notFound('This verification URL does not belong to any user');
     });
   } catch (error) {
     return res.boom.notFound('We could not find any user registration request for this URL');

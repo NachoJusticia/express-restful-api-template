@@ -52,8 +52,7 @@ app.use(require('express-session')({ secret: 'keyboard',resave: false}));
 app.use('/api/users', usersRoutes);
 app.use('/api/auth', authenticationRoutes);
 
-module.exports = app;
-
+// Start server
 const port = Config.PORT;
 
 app.listen(port, () => {
