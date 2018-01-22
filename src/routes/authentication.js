@@ -98,8 +98,9 @@ router.get('/email-verification/:verificationURL', async (req, res) => {
           }
           return res.status(200).send({ message: 'Confirmation email sent', info });
         });
+      } else {
+        return res.boom.notFound('This verification URL does not belong to any user');
       }
-      return res.boom.notFound('This verification URL does not belong to any user');
     });
   } catch (error) {
     return res.boom.notFound('We could not find any user registration request for this URL');
