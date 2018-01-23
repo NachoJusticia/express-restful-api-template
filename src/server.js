@@ -22,18 +22,6 @@ app.use(passport.session());
 const mongoose = require('mongoose');
 mongoose.connect(Config.DB_URL, { 'useMongoClient': true });
 
-// Email verification configuration
-const emailVerificationConfig = require('./js/emailVerification');
-const nev = require('email-verification')(mongoose);
-nev.configure(emailVerificationConfig, (error) => {
-  if (error) {
-    throw error;
-  }
-});
-app.use((req, res, next) => {
-  req.nev = nev;
-  next();
-});
 
 app.get('/api', (req, res) => {
   res.status(200).send('API works.');
