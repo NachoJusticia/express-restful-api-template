@@ -27,13 +27,19 @@ router.post('/login', async (req, res) => {
 
   try {
     const user = await db.users.findOne({ email: req.body.email }).lean();
-    if (user) {
-      if (Bcrypt.compareSync(req.body.password, user.password)) { // Check if the password is correct
+    if (user && user.isValidated === true) {
+      if ( Bcrypt.compare(req.body.password, user.password)) { // Check if the password is correct
         const token = JWT.sign(user, Config.jwt.secret, { expiresIn: 86400 });  // expires in 24 hours
-        return res.status(200).send({ token: token, message: 'Login successful', user });
+        return res.status(201).send({
+          token: token,
+          message: 'Login successful',
+          name: user.name,
+          email: user.email,
+          isValidated: user.isValidated });
       }
+    } else {
+      return res.boom.notFound('Incorrect credentials');
     }
-    return res.boom.notFound('Incorrect credentials');
   } catch (error) {
     return res.boom.badImplementation('There was a problem in the login process');
   }
@@ -51,27 +57,28 @@ router.post('/register', async (req, res) => {
       const newUser = new db.users({
         name: req.body.name,
         email: req.body.email,
-        password: req. body.password
+        isValidated: false,
+        randomNumber: JWT.sign({email: req.body.email}, 'verification' , {expiresIn: 15 * 60})
       });
 
-      db.users.create(newUser);
+      newUser.password = Bcrypt.hashSync(req.body.password, 10);
+
+      await db.users.create(newUser);
 
       //const token = JWT.sign({email: req.body.email, id: req.body._id}, Config.jwt.token , {expiresIn: 15 * 60});  // token valid 15 min
-      const link = 'http://localhost:3000/api/auth/email-verification/?email=' + newUser.email + '&id=' + newUser.name + '&token=' + '1234';
+      const link = 'http://localhost:3000/api/auth/email-verification/?email=' + newUser.email + '&id=' + newUser.name + '&token=' + newUser.randomNumber;
 
       const templatePath = './src/templates/emailVerification.html';
       const html = swig.renderFile(templatePath,{ link: link, name: newUser.name });
 
-      util.sendEmail(newUser.email, Config.nev.email, 'Company Name', html, function(err) {
+      util.sendEmail(newUser.email, Config.nev.email, 'WeSpeak Company', html, function(err) {
         if (err) {
-          return res.status(500).send({code: 'ERR_SERVER_ERROR', msg: err});
+          return res.boom.serverUnavailable('unavailable');
         }
-        return res.status(201).send();
       });
-
-      return res.status(404).send({msg: 'Verify email sent.'});
+      return res.status(201).send({message: 'Verify email sent.'});
     }
-
+    return res.status(201).send({message: 'Your user maybe already exist. Please log in.'});
   } catch (error) {
     return res.boom.badImplementation('There was a problem registering the user');
   }
@@ -97,12 +104,16 @@ router.get('/me', VerifyToken, async (req, res) => {
 router.get('/email-verification', async (req, res) => {
 
   try {
-    let dbUser = await db.users.findOne({ email: req.query.email });
-
-    if (dbUser) {
-      return res.send('Verification correct.');
-    }
-
+    db.users.findOne({ email: req.query.email, randomNumber: req.query.token }, (err, user) => {
+      user.isValidated = true;
+      user.randomNumber = undefined;
+      user.save(function (err) {
+        if (err) {
+          return res.boom.notFound('User not found.');
+        }
+      });
+    });
+    return res.status(201).send('User verification received and successfull.');
   } catch (error) {
     return res.boom.notFound('We could not find any user registration request for this URL');
   }
