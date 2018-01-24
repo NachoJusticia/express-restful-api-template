@@ -26,10 +26,11 @@ router.post('/login', async (req, res) => {
 
   try {
     const user = await db.users.findOne({ email: req.body.email });
-    if (user && user.isValidated === true) {
+    if (user) {
       if ( Bcrypt.compareSync(req.body.password, user.password) ) { // Check if the password is correct
         const token = JWT.sign(user, Config.jwt.secret, { expiresIn: 86400 });  // expires in 24 hours
         return res.status(201).send({
+          statusCode: 201,
           token: token,
           message: 'Login successful',
           name: user.name,
@@ -74,7 +75,7 @@ router.post('/register', async (req, res) => {
           return res.boom.serverUnavailable('unavailable');
         }
       });
-      return res.status(201).send({message: 'Verify email sent.'});
+      return res.status(201).send({statusCode: 201, message: 'Verify email sent.'});
     }
     return res.status(201).send({message: 'Your user maybe already exist. Please log in.'});
   } catch (error) {
