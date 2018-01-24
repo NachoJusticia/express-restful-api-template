@@ -2,7 +2,7 @@
   "PORT": "$PORT",
   "secret": "supersecret",
   "DB_URL": "$DB_URL",
-  "BASE_URL": "localhost:3000/api",
+  "BASE_URL": "http://localhost:3000/api",
   "jwt": {
     "secret": "super-secret-token"
   },

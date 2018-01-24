@@ -6,7 +6,7 @@ const UserSchema = new mongoose.Schema({
   name: String,
   email: { type: String, index: { unique: true, dropDups: true } },
   password: String,
-  randomNumber: String,
+  verificationToken: String,
   isValidated: Boolean
 });
 
