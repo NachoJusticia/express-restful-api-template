@@ -3,11 +3,30 @@
   "DB_URL": "$DB_URL",
   "BASE_URL": "$BASE_URL",
   "jwt": {
-    "secret": "$JWT_TOKEN"
+    "secret": "JWT_TOKEN"
   },
-  "google": {},
-  "facebook": {},
-  "twitter": {},
+  "google": {
+    "clientID": "$GOOGLE_CLIENT_ID",
+    "clientSecret": "$GOOGLE_CLIENT_SECRET",
+    "callbackURL": "$GOOGLE_CALLBACK_URL"
+  },
+  "facebook": {
+    "clientID": "$FACEBOOK_CLIENT_ID",
+    "clientSecret": "$FACEBOOK_CLIENT_SECRET",
+    "callbackURL": "$FACEBOOK_CALLBACK_URL",
+    "profileFields": [
+      "id",
+      "name",
+      "displayName",
+      "picture",
+      "email"
+    ]
+  },
+  "twitter": {
+    "clientID": "$TWITTER_CLIENT_ID",
+    "clientSecret": "$TWITTER_CLIENT_SECRET",
+    "callbackURL": "$TWITTER_CALLBACK_URL"
+  },
   "instagram": {},
   "nev": {
     "email": "$NEV_EMAIL",
