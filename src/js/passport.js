@@ -31,6 +31,14 @@ module.exports = function (passport) {
           done(null, registeredUser);
         }
       } catch (error) {
+        // If user has already registered only send user info
+        if (error.code === 11000 ) {
+          const newUser = new db.users({
+            name: profile.displayName,
+            email: profile.emails[0].value
+          });
+          return done(null, newUser);
+        }
         return done(null, error);
       }
     }));
@@ -53,6 +61,13 @@ module.exports = function (passport) {
           done(null, registeredUser);
         }
       } catch (error) {
+        if (error.code === 11000 ) {
+          const newUser = new db.users({
+            name: profile.name.givenName + ' ' + profile.name.familyName,
+            email: profile.emails[0].value
+          });
+          return done(null, newUser);
+        }
         return done(null, error);
       }
     }));
@@ -61,9 +76,6 @@ module.exports = function (passport) {
   passport.use(new TwitterStrategy(Config.twitter,
     async function (token, tokenSecret, profile, done) {
       try {
-        if (!EmailValidator.validate(profile.emails[0].value)) {
-          throw new Error('ValidationError');
-        }
         const newUser = new db.users({
           name: profile.displayName,
           email: profile.id
@@ -74,6 +86,13 @@ module.exports = function (passport) {
           done(null, registeredUser);
         }
       } catch (error) {
+        if (error.code === 11000 ) {
+          const newUser = new db.users({
+            name: profile.displayName,
+            email: profile.id
+          });
+          return done(null, newUser);
+        }
         return done(null, error);
       }
     }));
