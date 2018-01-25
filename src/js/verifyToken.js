@@ -1,19 +1,18 @@
 'use strict';
 
-const JWT = require('jsonwebtoken'); // Allow tokens creation, signing and verification
+const JWT = require('jsonwebtoken');
 const config = require('getconfig');
 
 
 module.exports = (req, res, next) => {
 
-  // Check the authentication header
   const token = req.headers['x-access-token'];
 
   if (!token) {
     return res.boom.forbidden('No token provided.');
   }
 
-  // Verify secret and checks expiration
+  // Verify secret and check token expiration
   JWT.verify(token, config.jwt.secret, (error, decoded) => {
     if (error) {
       if (error.name === 'TokenExpiredError') {
