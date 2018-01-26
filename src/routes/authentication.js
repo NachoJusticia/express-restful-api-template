@@ -24,9 +24,8 @@ const db = require('../models');
 const Bcrypt = require('bcryptjs'); // To hash passwords
 
 
-/**
- * Check user's email and password for login
- */
+//==========================================================================================//
+
 router.post('/login', async (req, res) => {
 
   try {
@@ -52,10 +51,8 @@ router.post('/login', async (req, res) => {
   }
 });
 
+//==========================================================================================//
 
-/**
- * Receives a user registration request and sends a verification email to confirm the email address
- */
 router.post('/register', async (req, res) => {
 
   try {
@@ -89,11 +86,8 @@ router.post('/register', async (req, res) => {
   }
 });
 
+//==========================================================================================//
 
-/**
- * [ Authentication required ]
- * Response with the logged user object if the JWT authentication is ok
- */
 router.get('/me', VerifyToken, async (req, res) => {
 
   if (req.user) { // The JWT can be decoded (the user is logged in)
@@ -102,10 +96,8 @@ router.get('/me', VerifyToken, async (req, res) => {
   return res.boom.unauthorized('Invalid token');
 });
 
+//==========================================================================================//
 
-/**
- * Confirms a temporal user and moves it to the persistent collection
- */
 router.get('/email-verification', async (req, res) => {
 
   try {
@@ -124,34 +116,31 @@ router.get('/email-verification', async (req, res) => {
   }
 });
 
+//==========================================================================================//
 
-// Facebook
 router.get('/facebook', passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
+
+//==========================================================================================//
+
 router.get('/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/facebook' }), (req, res) => res.redirect('OAuthLogin://login?user=' + JSON.stringify(req.user)));
 
+//==========================================================================================//
 
-// Google
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+//==========================================================================================//
+
 router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/google' }), (req, res) => res.redirect('OAuthLogin://login?user=' + JSON.stringify(req.user)));
 
+//==========================================================================================//
 
-// Twitter
 router.get('/twitter', passport.authenticate('twitter'));
+
+//==========================================================================================//
+
 router.get('/twitter/callback', passport.authenticate('twitter', { failureRedirect: '/twitter' }), (req, res) => res.redirect('OAuthLogin://login?user=' + JSON.stringify(req.user)));
 
+//==========================================================================================//
 
-/**
- * Exports the following routes:
- *
- * POST /login
- * POST /register
- * GET  /me
- * GET  /email-verification/:verificationURL
- * GET  /facebook
- * GET  /facebook/callback
- * GET  /google
- * GET  /google/callback
- * GET  /twitter
- * GET  /twitter/callback
- */
+
 module.exports = router;
