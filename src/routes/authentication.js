@@ -76,10 +76,10 @@ router.post('/register', async (req, res) => {
         }
       });
       return res.status(201).send({statusCode: 201, message: 'Verify email sent.'});
-    } else if ( validator.validate(req.body.email) === false ) {
-      return res.status(203).send({message: 'Please enter a valid email.'});
+    } else if ( !validator.validate(req.body.email) ) {
+      return res.status(200).send({message: 'Please enter a valid email.'});
     }
-    return res.status(202).send({message: 'Your user maybe already exist. Please log in.'});
+    return res.status(200).send({message: 'Your user maybe already exist. Please log in.'});
   } catch (error) {
     return res.boom.badImplementation('There was a problem registering the user');
   }
