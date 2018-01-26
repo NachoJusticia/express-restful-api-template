@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const swig = require('swig');
+const nunjucks = require( 'nunjucks' ) ;
 const util = require('../js/util');
 const randomstring = require('randomstring');
 const validator = require('email-validator');
@@ -12,6 +12,10 @@ const validator = require('email-validator');
 const JWT = require('jsonwebtoken'); // used to create, sign, and verify tokens
 const Config = require('getconfig');
 const VerifyToken = require('../js/verifyToken');
+
+// Import templates for emails
+const PATH_TO_TEMPLATES = './src/templates' ;
+nunjucks.configure( PATH_TO_TEMPLATES, { autoescape: true });
 
 //const _ = require('lodash');
 
@@ -58,7 +62,7 @@ router.post('/register', async (req, res) => {
     let dbUser = await db.users.findOne({ email: req.body.email });
     if (!dbUser && validator.validate(req.body.email)) {
       const newUser = new db.users({
-        name: req.body.name,
+        name: req.body.name || req.body.email.split('@')[0],
         email: req.body.email,
         isValidated: false,
         verificationToken: randomstring.generate(48)
@@ -68,8 +72,7 @@ router.post('/register', async (req, res) => {
       await db.users.create(newUser);
 
       const link = Config.BASE_URL  + '/auth/email-verification/?verificationToken=' + newUser.verificationToken;
-      const templatePath = './src/templates/emailVerification.html';
-      const html = swig.renderFile(templatePath,{ link: link, name: newUser.name });
+      const html = nunjucks.render('emailVerification.html', { link: link, name: newUser.name });
 
       util.sendEmail(newUser.email, Config.nev.email, 'WeSpeak Company', html, function(err) {
         if (err) {
