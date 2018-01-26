@@ -6,6 +6,7 @@ const passport = require('passport');
 const swig = require('swig');
 const util = require('../js/util');
 const randomstring = require('randomstring');
+const validator = require('email-validator');
 
 // Configure JWT
 const JWT = require('jsonwebtoken'); // used to create, sign, and verify tokens
@@ -26,7 +27,7 @@ router.post('/login', async (req, res) => {
 
   try {
     const user = await db.users.findOne({ email: req.body.email });
-    if (user) {
+    if (user && validator.validate(req.body.email)) {
       if ( Bcrypt.compareSync(req.body.password, user.password) ) { // Check if the password is correct
         const token = JWT.sign(user, Config.jwt.secret, { expiresIn: 86400 });  // expires in 24 hours
         return res.status(201).send({
@@ -55,7 +56,7 @@ router.post('/register', async (req, res) => {
 
   try {
     let dbUser = await db.users.findOne({ email: req.body.email });
-    if (!dbUser) {
+    if (!dbUser && validator.validate(req.body.email)) {
       const newUser = new db.users({
         name: req.body.name,
         email: req.body.email,
@@ -76,6 +77,8 @@ router.post('/register', async (req, res) => {
         }
       });
       return res.status(201).send({statusCode: 201, message: 'Verify email sent.'});
+    } else if ( validator.validate(req.body.email) === false ) {
+      return res.status(201).send({message: 'Please enter a valid email.'});
     }
     return res.status(201).send({message: 'Your user maybe already exist. Please log in.'});
   } catch (error) {
