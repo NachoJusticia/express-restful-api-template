@@ -17,7 +17,6 @@ const VerifyToken = require('../js/verifyToken');
 const PATH_TO_TEMPLATES = './src/templates' ;
 nunjucks.configure( PATH_TO_TEMPLATES, { autoescape: true });
 
-//const _ = require('lodash');
 
 // DB
 const db = require('../models');
