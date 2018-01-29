@@ -41,7 +41,7 @@ app.use('/api/users', usersRoutes);
 app.use('/api/auth', authenticationRoutes);
 
 // Start server
-const port = Config.PORT;
+const port = Config.PORT || 3000;
 
 app.listen(port, () => {
   console.info(`Express server listening on port ${port}`);

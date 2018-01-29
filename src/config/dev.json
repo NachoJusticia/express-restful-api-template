@@ -1,5 +1,5 @@
 {
-  "PORT": "$PORT",
+  "PORT": "$$PORT",
   "secret": "supersecret",
   "DB_URL": "$DB_URL",
   "BASE_URL": "http://localhost:3000/api",
