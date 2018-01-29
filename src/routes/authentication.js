@@ -3,14 +3,20 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const swig = require('swig');
+const nunjucks = require( 'nunjucks' ) ;
 const util = require('../js/util');
 const randomstring = require('randomstring');
+const validator = require('email-validator');
 
 // Configure JWT
 const JWT = require('jsonwebtoken'); // used to create, sign, and verify tokens
 const Config = require('getconfig');
 const VerifyToken = require('../js/verifyToken');
+
+// Import templates for emails
+const PATH_TO_TEMPLATES = './src/templates' ;
+nunjucks.configure( PATH_TO_TEMPLATES, { autoescape: true });
+
 
 // DB
 const db = require('../models');
@@ -23,7 +29,7 @@ router.post('/login', async (req, res) => {
 
   try {
     const user = await db.users.findOne({ email: req.body.email });
-    if (user) {
+    if (user && validator.validate(req.body.email)) {
       if ( Bcrypt.compareSync(req.body.password, user.password) ) { // Check if the password is correct
         const token = JWT.sign(user, Config.jwt.secret, { expiresIn: 86400 });  // expires in 24 hours
         return res.status(201).send({
@@ -50,9 +56,9 @@ router.post('/register', async (req, res) => {
 
   try {
     let dbUser = await db.users.findOne({ email: req.body.email });
-    if (!dbUser) {
+    if (!dbUser && validator.validate(req.body.email)) {
       const newUser = new db.users({
-        name: req.body.name,
+        name: req.body.name || req.body.email.split('@')[0],
         email: req.body.email,
         isValidated: false,
         verificationToken: randomstring.generate(48)
@@ -62,8 +68,7 @@ router.post('/register', async (req, res) => {
       await db.users.create(newUser);
 
       const link = Config.BASE_URL  + '/auth/email-verification/?verificationToken=' + newUser.verificationToken;
-      const templatePath = './src/templates/emailVerification.html';
-      const html = swig.renderFile(templatePath,{ link: link, name: newUser.name });
+      const html = nunjucks.render('emailVerification.html', { link: link, name: newUser.name });
 
       util.sendEmail(newUser.email, Config.nev.email, 'WeSpeak Company', html, function(err) {
         if (err) {
@@ -71,8 +76,10 @@ router.post('/register', async (req, res) => {
         }
       });
       return res.status(201).send({statusCode: 201, message: 'Verify email sent.'});
+    } else if ( !validator.validate(req.body.email) ) {
+      return res.status(200).send({message: 'Please enter a valid email.'});
     }
-    return res.status(201).send({message: 'Your user maybe already exist. Please log in.'});
+    return res.status(200).send({message: 'Your user maybe already exist. Please log in.'});
   } catch (error) {
     return res.boom.badImplementation('There was a problem registering the user');
   }

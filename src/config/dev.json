@@ -10,18 +10,24 @@
     "clientID": "CLIENT-ID-GOOGLE",
     "clientSecret": "CLIENT-SECRET-GOOGLE",
     "callbackURL": "http://localhost:3000/api/auth/google/callback"
-    },
-    "facebook": {
+  },
+  "facebook": {
     "clientID": "CLIENT-ID-FACEBOOK",
     "clientSecret": "CLIENT-SECRET-FACEBOOK",
     "callbackURL": "http://localhost:3000/api/auth/facebook/callback",
-    "profileFields": ["id", "name", "displayName", "picture", "email"]
-    },
-    "twitter": {
+    "profileFields": [
+      "id",
+      "name",
+      "displayName",
+      "picture",
+      "email"
+    ]
+  },
+  "twitter": {
     "consumerKey": "CONSUMER-KEY-TWITTER",
     "consumerSecret": "CONSUMER-SECRET-TWITTER",
     "callbackURL": "http://localhost:3000/api/auth/twitter/callback"
-    },
+  },
   "instagram": {},
   "nev": {
     "email": "my-mail@example.com",

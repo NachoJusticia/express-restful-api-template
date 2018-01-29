@@ -43,12 +43,12 @@
     "lodash": "^4.17.4",
     "mongoose": "^4.13.9",
     "nodemailer": "^4.4.2",
+    "nunjucks": "^3.0.1",
     "passport": "^0.4.0",
     "passport-facebook": "^2.1.1",
     "passport-google-oauth20": "^1.0.0",
     "passport-twitter": "^1.0.4",
-    "randomstring": "^1.1.5",
-    "swig": "^1.4.2"
+    "randomstring": "^1.1.5"
   },
   "devDependencies": {
     "commitizen": "^2.9.6",
