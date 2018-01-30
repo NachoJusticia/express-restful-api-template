@@ -6,7 +6,7 @@ const config = require('getconfig');
 
 module.exports = (req, res, next) => {
 
-  const token = req.headers['x-access-token'];
+  const token = req.headers.authorization;
 
   if (!token) {
     return res.boom.forbidden('No token provided.');
