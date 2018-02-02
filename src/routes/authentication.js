@@ -3,20 +3,18 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const nunjucks = require( 'nunjucks' ) ;
+const nunjucks = require('nunjucks');
 const util = require('../js/util');
 const randomstring = require('randomstring');
-const validator = require('email-validator');
+const EmailValidator = require('email-validator');
 
 // Configure JWT
 const JWT = require('jsonwebtoken'); // used to create, sign, and verify tokens
 const Config = require('getconfig');
 const VerifyToken = require('../js/verifyToken');
 
-// Import templates for emails
-const PATH_TO_TEMPLATES = './src/templates' ;
-nunjucks.configure( PATH_TO_TEMPLATES, { autoescape: true });
-
+// Import email template
+nunjucks.configure('./src/templates', { autoescape: true });
 
 // DB
 const db = require('../models');
@@ -28,23 +26,22 @@ const Bcrypt = require('bcryptjs'); // To hash passwords
 router.post('/login', async (req, res) => {
 
   try {
-    const user = await db.users.findOne({ email: req.body.email });
-    if (user && validator.validate(req.body.email)) {
-      if ( Bcrypt.compareSync(req.body.password, user.password) ) { // Check if the password is correct
+    if (!req.body.email || !EmailValidator.validate(req.body.email)) {
+      return res.boom.badRequest('Please enter a valid email');
+    }
+    const user = await db.users.findOne({ email: req.body.email }).lean();
+    if (user) {
+      if (Bcrypt.compareSync(req.body.password, user.password)) { // Check if the password is correct
         const token = JWT.sign(user, Config.jwt.secret, { expiresIn: 86400 });  // expires in 24 hours
-        return res.status(201).send({
-          statusCode: 201,
-          token: token,
+        return res.status(200).send({
           message: 'Login successful',
-          name: user.name,
-          email: user.email,
-          isValidated: user.isValidated });
+          token: token,
+          user
+        });
       }
       return res.boom.notFound('Incorrect credentials');
-
     }
     return res.boom.notFound('Incorrect credentials');
-
   } catch (error) {
     return res.boom.badImplementation('There was a problem in the login process');
   }
@@ -52,66 +49,65 @@ router.post('/login', async (req, res) => {
 
 //==========================================================================================//
 
-router.post('/register', async (req, res) => {
+router.post('/register', async function (req, res) {
 
   try {
-    let dbUser = await db.users.findOne({ email: req.body.email });
-    if (!dbUser && validator.validate(req.body.email)) {
-      const newUser = new db.users({
-        name: req.body.name || req.body.email.split('@')[0],
-        email: req.body.email,
-        isValidated: false,
-        verificationToken: randomstring.generate(48)
-      });
-
-      newUser.password = Bcrypt.hashSync(req.body.password, 10);
-      await db.users.create(newUser);
-
-      const link = Config.BASE_URL  + '/auth/email-verification/?verificationToken=' + newUser.verificationToken;
-      const html = nunjucks.render('emailVerification.html', { link: link, name: newUser.name });
-
-      util.sendEmail(newUser.email, Config.nev.email, 'WeSpeak Company', html, function(err) {
-        if (err) {
-          return res.boom.serverUnavailable('unavailable');
-        }
-      });
-      return res.status(201).send({statusCode: 201, message: 'Verify email sent.'});
-    } else if ( !validator.validate(req.body.email) ) {
-      return res.status(200).send({message: 'Please enter a valid email.'});
+    if (!req.body.email || !EmailValidator.validate(req.body.email)) {
+      return res.boom.badRequest('Please enter a valid email');
     }
-    return res.status(200).send({message: 'Your user maybe already exist. Please log in.'});
+
+    const newUser = new db.users({
+      name: req.body.name,
+      email: req.body.email,
+      password: Bcrypt.hashSync(req.body.password, 10),
+      verificationToken: randomstring.generate(48)
+    });
+    await db.users.create(newUser);
+
+    const html = nunjucks.render('emailVerification.html', {
+      link: Config.BASE_URL + '/auth/email-verification/?verificationToken=' + newUser.verificationToken,
+      name: newUser.name
+    });
+
+    util.sendEmail(newUser.email, Config.nev.email, 'Express Awesome Template', html, (err) => {
+      if (err) {
+        return res.boom.serverUnavailable('Gmail service temporary unaccessible');
+      }
+      return res.status(200).send({ message: 'Verification email sent to ' + req.body.email });
+    });
   } catch (error) {
+    if (error.code === 11000) {
+      return res.boom.conflict('The user with email ' + req.body.email + ' already exists');
+    }
     return res.boom.badImplementation('There was a problem registering the user');
   }
 });
 
 //==========================================================================================//
 
-router.get('/me', VerifyToken, async (req, res) => {
+router.get('/me', VerifyToken, async function (req, res) {
 
   if (req.user) { // The JWT can be decoded (the user is logged in)
     return res.status(200).send(req.user);
   }
-  return res.boom.unauthorized('Invalid token');
+  return res.boom.unauthorized('Invalid JWT token');
 });
 
 //==========================================================================================//
 
-router.get('/email-verification', async (req, res) => {
+router.get('/email-verification', async function (req, res) {
 
   try {
-    db.users.findOne({ verificationToken: req.query.verificationToken }, (err, user) => {
-      user.isValidated = true;
-      user.verificationToken = undefined;
-      user.save(function (err) {
-        if (err) {
-          return res.boom.notFound('User not found.');
-        }
-      });
-    });
-    return res.status(201).send('User verification received and successfull.');
+    const user = await db.users.findOne({ verificationToken: req.query.verificationToken });
+
+    if (!user) {
+      return res.boom.notFound('This token URL does is not associated to any user');
+    }
+    user.verificationToken = undefined;
+    await user.save();
+    return res.status(200).send('User verification success');
   } catch (error) {
-    return res.boom.notFound('We could not find any user registration request for this URL');
+    return res.boom.badImplementation('There was a problem verifying the user\'s email');
   }
 });
 

@@ -1,7 +1,8 @@
 'use strict';
+
 const Config = require('getconfig');
 const nodemailer = require('nodemailer');
-let util = exports;
+const util = exports;
 
 const emailer = nodemailer.createTransport({
   service: 'Gmail',
@@ -12,8 +13,9 @@ const emailer = nodemailer.createTransport({
 });
 
 
-util.sendEmail = function (to, from, subject, html, cb) {
-  let message = {
+util.sendEmail = (to, from, subject, html, callback) => {
+
+  const message = {
     from: from,
     to: to,
     subject: subject,
@@ -21,11 +23,10 @@ util.sendEmail = function (to, from, subject, html, cb) {
     html: html
   };
 
-  emailer.sendMail(message, function (err) {
+  emailer.sendMail(message, (err) => {
     if (err) {
-      return cb(err);
+      return callback(err);
     }
-    cb(null);
+    return callback(null);
   });
 };
-

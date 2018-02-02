@@ -8,7 +8,7 @@ const EmailValidator = require('email-validator');
 const db = require('../models');
 
 
-module.exports = function (passport) {
+module.exports = (passport) => {
 
   passport.serializeUser((user, done) => done(null, user));   // Serialize user into the sessions
   passport.deserializeUser((user, done) => done(null, user)); // Deserialize user from the sessions

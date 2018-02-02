@@ -1,5 +1,5 @@
 {
-  "PORT": "$PORT",
+  "PORT": "$$PORT",
   "DB_URL": "$DB_URL",
   "BASE_URL": "$BASE_URL",
   "jwt": {
