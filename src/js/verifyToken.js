@@ -6,11 +6,16 @@ const config = require('getconfig');
 
 module.exports = (req, res, next) => {
 
-  const token = req.headers.authorization;
-
-  if (!token) {
-    return res.boom.forbidden('No token provided.');
+  const tokenHeader = req.headers.authorization;
+  let headerParts = ['', ''];
+  if (tokenHeader) {
+    headerParts = tokenHeader.split(' ');
   }
+  if (headerParts.length !== 2 || headerParts[0] !== 'Bearer') {
+    return res.boom.unauthorized('Invalid authorization header');
+  }
+
+  const token = headerParts[1];
 
   // Verify secret and check token expiration
   JWT.verify(token, config.jwt.secret, (error, decoded) => {
